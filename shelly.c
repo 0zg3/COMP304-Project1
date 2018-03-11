@@ -165,6 +165,7 @@ int parseCommand(char inputBuffer[], char *args[],int *background, int *redirect
                         inputBuffer[i] = '\0'; /* add a null char; make a C string */
                         start = -1;
                   }
+
                   break;
 
                   case '\n':                 /* should be the final char examined */
@@ -189,68 +190,7 @@ int parseCommand(char inputBuffer[], char *args[],int *background, int *redirect
                               inputBuffer[i-1] = '\0';
                         }
                   }
-                  if(rdCount == 0)
-                  {
-                        if (inputBuffer[i] == '>')
-                        {
 
-                              rdCount = 1;
-                              *redirection = 1;
-                        }
-                  } else if(rdCount == 1)
-                  {
-
-                        if (inputBuffer[i] == '>' && !abb)
-                        {
-                              *redirection = 2;
-                              rdCount = 2;
-                              ignore = 1;
-                        } else if (inputBuffer[i] == ' ' || inputBuffer[i] == '\t')
-                        {
-                              rdCount = 1;
-                              ignore = 1;
-                              abb = 1;
-                        }else
-                        {
-                              rdCount = 2;
-                              ignore = 0;
-                        }
-
-                  }
-                  if (rdCount == 2 )
-                  {
-                        if (inputBuffer[i] == ' ' || inputBuffer[i] == '\t' || inputBuffer[i] == '\n')
-                        {
-                              if (mystart != -1)
-                              {
-                                    inputBuffer[llength] = '\0';
-                                    printf("End: %d\n", llength);
-                                    llength++;
-                                    rdCount = -1;
-                              }
-                        } else
-                        {
-                              if (mystart == -1)
-                              {
-                                    mystart = i;
-                                    printf("Mystart: %d\n",mystart);
-                              } else //mystart != -1
-                              {
-
-                              }
-                              llength++;
-                        }
-                  }
-                  if (ignore)
-                  {
-                        if(rdCount == 2 && (inputBuffer[i] == ' ' || inputBuffer[i] == '\t'))
-                        {
-
-                        } else
-                        {
-                              ignore = 0;
-                        }
-                  }
                   // if (rdCount == 3)
                   // {
                   //       if (inputBuffer[i] == ' ' || inputBuffer[i] == '\t')
@@ -271,6 +211,68 @@ int parseCommand(char inputBuffer[], char *args[],int *background, int *redirect
 
 
             } /* end of switch */
+            if(rdCount == 0)
+            {
+                  if (inputBuffer[i] == '>')
+                  {
+
+                        rdCount = 1;
+                        *redirection = 1;
+                  }
+            } else if(rdCount == 1)
+            {
+
+                  if (inputBuffer[i] == '>' && !abb)
+                  {
+                        *redirection = 2;
+                        rdCount = 2;
+                        ignore = 1;
+                  } else if (inputBuffer[i] == ' ' || inputBuffer[i] == '\t')
+                  {
+                        rdCount = 1;
+                        ignore = 1;
+                        abb = 1;
+                  }else
+                  {
+                        rdCount = 2;
+                        ignore = 0;
+                  }
+
+            }
+            if (rdCount == 2 && !ignore)
+            {
+                  if (inputBuffer[i] == ' ' || inputBuffer[i] == '\t' || inputBuffer[i] == '\n')
+                  {
+                        if (mystart != -1)
+                        {
+                              inputBuffer[llength + mystart] = '\0';
+                              printf("Length: %d\n", llength);
+                              llength++;
+                              rdCount = -1;
+                        }
+                  } else
+                  {
+                        if (mystart == -1)
+                        {
+                              mystart = i;
+                              printf("Mystart: %d\n",mystart);
+                        } else //mystart != -1
+                        {
+
+                        }
+                        llength++;
+                  }
+            }
+            if (ignore)
+            {
+                  if(rdCount == 2 && (inputBuffer[i] == ' ' || inputBuffer[i] == '\t'))
+                  {
+
+                  } else
+                  {
+                        ignore = 0;
+                  }
+            }
       }    /* end of for */
 
       /**
