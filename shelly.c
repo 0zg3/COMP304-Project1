@@ -2,7 +2,7 @@
 * shelly interface program
 
 KUSIS ID: 40836 NAME: ÖZGE DEMİR
-KUSIS ID: 	NAME: BERRİN ÖNSİPER
+KUSIS ID: 0050169	NAME: DENİZ HACISÜLEYMAN
 
 */
 
@@ -19,7 +19,11 @@ KUSIS ID: 	NAME: BERRİN ÖNSİPER
 
 int parseCommand(char inputBuffer[], char *args[],int *background, int *redirection, char *rdarg[], int *argct);
 
-void execute(char *args[]);
+/*typedef struct cmd_value_hashtable
+{
+      int size;
+      cmd_value_hashtable **table;
+}cmd_value_hashtable;*/
 
 int main(void)
 {
@@ -35,8 +39,13 @@ int main(void)
 
       char path[MAX_LINE+5];
       char path2[MAX_LINE+9];
+      char path3[MAX_LINE+2];
+
       strcpy(path, "/bin/");
       strcpy(path2, "/usr/bin/");
+      strcpy(path3, "./");
+
+
       int i, upper;
       int j=0;
       while (shouldrun){            		/* Program terminates normally inside setup */
@@ -60,6 +69,7 @@ int main(void)
                   {
                         strcpy(path+5, args[0]);
                         strcpy(path2+9, args[0]);
+                        strcpy(path3+2, args[0]);
                         shouldrun = 0;
                         printf("Args\n");
                         for( j=0; j<argct; j++)
@@ -73,9 +83,19 @@ int main(void)
                         {
                               if(execv(path2, args) == -1)
                               {
-                                    printf("ERROR: command not found \n");
+                                    if(execv(path3, args) == -1 )
+                                    {
+                                          printf("ERROR: command not found \n");
+                                    }
                               }
                         }
+
+                        /*if(args[0] == "bookmark"){
+                              // take key (its command)
+                              // run its value
+                              bookmark = cmd_value_hashtable[1][0]
+                              bookmark >> mybookmarks;
+                        }*/
 
 
                   }else if(child < 0)
@@ -154,6 +174,8 @@ int parseCommand(char inputBuffer[], char *args[],int *background, int *redirect
             /* examine every character in the inputBuffer */
 
             switch (inputBuffer[i]){
+                  case '>':
+                  break;
                   case ' ':
                   case '\t' :               /* argument separators */
                   if (rdCount < 1)
